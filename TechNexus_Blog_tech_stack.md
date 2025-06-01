@@ -475,7 +475,7 @@ Cluster)]
 - End-to-end tests with Cypress
 - Performance testing with Lighthouse CI
 
-### CI/CD Pipeline
+### CI/CD Workflow
 
 - Branch-based deployments
 - Automated testing before merge
@@ -485,7 +485,7 @@ Cluster)]
 
 ## Scalability Considerations
 
-### Horizontal Scaling
+### Service Scaling
 
 - Stateless services for easier replication
 - Load balancing across service instances
