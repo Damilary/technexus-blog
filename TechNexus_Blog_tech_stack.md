@@ -326,7 +326,7 @@ sequenceDiagram
 - **Mixpanel**: Event-based user analytics
 - **DataDog / New Relic**: Application performance monitoring
 
-### Content Delivery
+### Content Delivery Optimization
 
 - **Cloudflare / AWS CloudFront**: CDN for media assets
 - **Cloudinary**: Image optimization and transformation
