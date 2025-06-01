@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql" // Or "sqlite", "mysql", "sqlserver", "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  username     String    @unique
+  email        String    @unique
+  passwordHash String
+  firstName    String? // Optional fields use ?
+  lastName     String?
+  role         UserRole  @default(READER)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  articles     Article[] // Relation to Article model (one-to-many)
+  comments     Comment[] // Relation to Comment model
+  // Add other relations like preferences, author profile if User can be an Author
+  // preferences   UserPreferences? @relation(fields: [userPreferencesId], references: [id])
+  // userPreferencesId String?       @unique
+  // authorProfile Author?
+}
+
+model Article {
+  id              String    @id @default(cuid())
+  title           String
+  slug            String    @unique
+  excerpt         String?
+  // content             Json // For ContentBlock[], Prisma's Json type can store structured data
+  publishedDate   DateTime?
+  updatedDate     DateTime  @updatedAt
+  readTimeMinutes Int?
+  isFeatured      Boolean   @default(false)
+  isPublished     Boolean   @default(false)
+  isTopPick       Boolean   @default(false)
+  topPickOrder    Int?
+  authorId        String // Foreign key for the author
+  author          User      @relation(fields: [authorId], references: [id]) // Relation to User model
+  // primaryCategoryId   String?
+  // primaryCategory     Category? @relation("PrimaryArticles", fields: [primaryCategoryId], references: [id])
+  // secondaryCategories Category[] @relation("SecondaryArticles")
+  // tags                String[] // Prisma doesn't directly support string arrays for all DBs, consider a Tag model
+  // statistics          ArticleStatistics?
+  comments        Comment[]
+  // Add other fields and relations
+}
+
+// You'll need to define other models like Category, Comment, Author, UserPreferences etc.
+// Example for Category:
+// model Category {
+//   id          String    @id @default(cuid())
+//   name        String    @unique
+//   slug        String    @unique
+//   description String?
+//   iconUrl     String?
+//   articles    Article[] @relation("PrimaryArticles") // Articles where this is primary
+//   secondaryArticles Article[] @relation("SecondaryArticles") // Articles where this is secondary
+// }
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  articleId String
+  article   Article  @relation(fields: [articleId], references: [id])
+  // parentCommentId String?
+  // parentComment   Comment?  @relation("Replies", fields: [parentCommentId], references: [id])
+  // replies         Comment[] @relation("Replies")
+}
+
+enum UserRole {
+  READER
+  CONTRIBUTOR
+  EDITOR
+  ADMIN
+}
+
+// Define other enums like ExpertiseLevel, ContentFormat, etc.
