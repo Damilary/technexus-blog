@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { SearchBar } from '@/components/ui/SearchBar';
@@ -10,6 +10,7 @@ import { UserMenu } from '@/components/features/auth/UserMenu';
 import { MobileMenu } from '@/components/layout/MobileMenu';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuth } from '@/hooks/useAuth';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export interface NavigationItem {
   name: string;
@@ -29,9 +30,18 @@ export interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ navigation }) => {
   const { theme, toggleTheme } = useTheme();
   const { user, isAuthenticated } = useAuth();
+  const logout = useAuthStore(state => state.logout);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showNewsletterModal, setShowNewsletterModal] = useState(false);
+
+  const handleLogout = useCallback(async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  }, [logout]);
 
   // Handle scroll effect for sticky header
   useEffect(() => {
@@ -127,7 +137,7 @@ export const Header: React.FC<HeaderProps> = ({ navigation }) => {
             
             {/* Auth buttons or user menu */}
             {isAuthenticated && user ? (
-              <UserMenu user={user} />
+              <UserMenu user={user} onLogout={handleLogout} />
             ) : (
               <div className="hidden md:flex space-x-2">
                 <Button variant="secondary" href="/login">

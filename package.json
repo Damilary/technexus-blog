@@ -1,17 +1,25 @@
 {
-  "name": "technexus-blog",
+  "name": "@Damilary/technexus-blog", // FIX 1: Scoped name for GitHub Packages
   "version": "0.1.0",
-  "private": true,
+  "private": false, // FIX 2: Should be false if you intend to publish
+  "description": "A Next.js project bootstrapped with create-next-app, intended for publishing to GitHub Packages.", // IMPROVEMENT: More descriptive description
+  "main": "dist/index.js", // FIX 3: Point to a build output entry file (assuming a build step)
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "next build", // This builds the Next.js app for deployment, not necessarily for a publishable package
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepare": "npm run build:package", // FIX 4: Add a prepare script for building the package
+    "build:package": "echo 'Add your package build command here, e.g., tsc --outDir dist'" // FIX 5: Placeholder for actual package build
   },
   "dependencies": {
     "@tanstack/react-query": "^5.76.1",
+<<<<<<< HEAD
     "clsx": "^2.1.1",
     "framer-motion": "^12.12.1",
+=======
+    "framer-motion": "^12.12.1", // Double check this version
+>>>>>>> 29ea8b0d612ff0c6c0f77fa54afda453af57e447
     "graphql-request": "^7.1.2",
     "next": "15.3.2",
     "prismjs": "^1.30.0",
@@ -42,9 +50,14 @@
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   },
-  "description": "This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).",
-  "main": "tailwind.config.js",
-  "keywords": [],
-  "author": "",
+  "publishConfig": { // FIX 6: Add publishConfig for GitHub Packages
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "repository": { // FIX 7: Add repository info
+    "type": "git",
+    "url": "git+https://github.com/Damilary/technexus-blog.git"
+  },
+  "keywords": ["nextjs", "blog", "github-packages"], // IMPROVEMENT: Add keywords
+  "author": "Damilary", // IMPROVEMENT: Add your name
   "license": "ISC"
 }
