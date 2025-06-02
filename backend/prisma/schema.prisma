@@ -17,7 +17,7 @@ datasource db {
 model User {
   id            String    @id @default(uuid())
   email         String    @unique
-  role          String    @default("USER")
+  role          UserRole  @default(USER)
   username      String    @unique
   passwordHash  String
   firstName     String? // Optional fields use ?
@@ -47,26 +47,22 @@ model Article {
   topPickOrder        Int?
   authorId            String // Foreign key for the author
   author              User      @relation(fields: [authorId], references: [id]) // Relation to User model
-  // primaryCategoryId   String?
-  // primaryCategory     Category? @relation("PrimaryArticles", fields: [primaryCategoryId], references: [id])
-  // secondaryCategories Category[] @relation("SecondaryArticles")
-  // tags                String[] // Prisma doesn't directly support string arrays for all DBs, consider a Tag model
-  // statistics          ArticleStatistics?
+  primaryCategoryId   String?
+  primaryCategory     Category? @relation("PrimaryArticles", fields: [primaryCategoryId], references: [id])
+  secondaryCategories Category[] @relation("SecondaryArticles")
   comments            Comment[]
   // Add other fields and relations
 }
 
-// You'll need to define other models like Category, Comment, Author, UserPreferences etc.
-// Example for Category:
-// model Category {
-//   id          String    @id @default(cuid())
-//   name        String    @unique
-//   slug        String    @unique
-//   description String?
-//   iconUrl     String?
-//   articles    Article[] @relation("PrimaryArticles") // Articles where this is primary
-//   secondaryArticles Article[] @relation("SecondaryArticles") // Articles where this is secondary
-// }
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  iconUrl     String?
+  articles    Article[] @relation("PrimaryArticles") // Articles where this is primary
+  secondaryArticles Article[] @relation("SecondaryArticles") // Articles where this is secondary
+}
 
 model Comment {
   id        String   @id @default(cuid())
@@ -83,7 +79,7 @@ model Comment {
 
 
 enum UserRole {
-  READER
+  USER
   CONTRIBUTOR
   EDITOR
   ADMIN

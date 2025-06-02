@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { User } from "@/hooks/useAuth"; // Assuming User type has name and optional avatar
+import type { User } from "@/types/user";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -14,10 +14,14 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  // Stores references to all DOM elements that are potential menu items
   const itemElementsRef = useRef<(HTMLElement | null)[]>([]);
   const [typeAheadBuffer, setTypeAheadBuffer] = useState("");
   const typeAheadTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Fix ref callback types
+  const setItemRef = (index: number) => (element: HTMLElement | null) => {
+    itemElementsRef.current[index] = element;
+  };
 
   // Helper to get currently focusable items
   const getFocusableItems = useCallback(() => {
@@ -218,7 +222,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
         >
           <Link href="/profile" passHref legacyBehavior>
             <a
-              ref={(el) => (itemElementsRef.current[0] = el)}
+              ref={setItemRef(0)}
               className="block px-4 py-2 text-sm text-dark dark:text-white hover:bg-light dark:hover:bg-dark-light"
               role="menuitem"
               tabIndex={0} // Make focusable when menu is open
@@ -229,7 +233,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
           </Link>
           <Link href="/settings" passHref legacyBehavior>
             <a
-              ref={(el) => (itemElementsRef.current[1] = el)}
+              ref={setItemRef(1)}
               className={`block px-4 py-2 text-sm  hover:bg-light dark:hover:bg-dark-light ${
                 isSettingsDisabled
                   ? "text-gray-400 dark:text-gray-500 cursor-not-allowed"
@@ -250,7 +254,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
             </a>
           </Link>
           <button
-            ref={(el) => (itemElementsRef.current[2] = el)}
+            ref={setItemRef(2)}
             type="button"
             className="block w-full text-left px-4 py-2 text-sm text-dark dark:text-white hover:bg-light dark:hover:bg-dark-light"
             role="menuitem"

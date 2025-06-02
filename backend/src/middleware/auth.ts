@@ -1,69 +1,50 @@
 import jwt, { Secret, JwtPayload, verify } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from '../generated/prisma' // Import PrismaClient
-import { User } from "../graphql/types";
+import { PrismaClient } from "../generated/prisma";
+import { User, UserRole, Context } from "../graphql/types";
 
-export const SECRET_KEY: Secret = "your-secret-key-here";
-
-export interface CustomRequest extends Request {
-  token: string | JwtPayload;
-}
-
-export const auth = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const token = req.header("Authorization")?.replace("Bearer ", "");
-
-    if (!token) {
-      throw new Error();
-    }
-
-    const decoded = jwt.verify(token, SECRET_KEY);
-    (req as CustomRequest).token = decoded;
-
-    next();
-  } catch (error) {
-    console.error("Auth error:", error);
-  }
-};
+export const SECRET_KEY: Secret =
+  process.env.JWT_SECRET || "your-secret-key-here";
 
 interface TokenPayload {
   userId: string;
 }
 
-export interface Context {
-  prisma: PrismaClient;
-  user: User | null;
-}
-
-export async function createContext(
-  { req }: { req: Request },
+export async function getUserFromToken(
+  token: string,
+  jwtSecret: string,
   prisma: PrismaClient
-): Promise<Context> {
-  const auth = req?.headers?.authorization;
+): Promise<User | null> {
+  try {
+    const verifiedToken = verify(token, jwtSecret) as TokenPayload;
+    const user = await prisma.user.findUnique({
+      where: { id: verifiedToken.userId },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        role: true,
+        firstName: true,
+        lastName: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
 
-  if (auth) {
-    try {
-      const token = auth.replace("Bearer ", "");
-      const verifiedToken = verify(
-        token,
-        process.env.JWT_SECRET!
-      ) as TokenPayload;
+    if (!user) return null;
 
-      const user = await prisma.user.findUnique({
-        where: { id: verifiedToken.userId },
-        select: {
-          id: true,
-          email: true,
-          role: true,
-          name: true,
-        },
-      });
-
-      return { prisma, user };
-    } catch (error) {
-      console.error("Auth error:", error);
-    }
+    return {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      role: user.role as UserRole,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+  } catch (error) {
+    console.error("Error verifying token:", error);
+    return null;
   }
-
-  return { prisma, user: null };
 }

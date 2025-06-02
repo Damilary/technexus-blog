@@ -1,28 +1,28 @@
 // backend/src/index.ts
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config(); // Load environment variables from .env file
 
-import express from 'express';
-import mongoose from 'mongoose';
-import cors from 'cors';
-import helmet from 'helmet';
-import { startStandaloneServer } from '@apollo/server/standalone';
-import { ApolloServer } from 'apollo-server-express';
-import { typeDefs } from './graphql/typeDefs';
-import { resolvers, userResolvers } from './graphql/resolvers'; // Your resolvers
-import { getUserFromToken } from './middleware/auth'; // Hypothetical auth middleware
-import { PrismaClient } from './generated/prisma'; // Import PrismaClient
-import { Context } from './graphql/types'; // Import your context type
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import helmet from "helmet";
+import { ApolloServer } from "@apollo/server";
+import { expressMiddleware } from "@apollo/server/express4";
+import { typeDefs } from "./graphql/typeDefs";
+import { resolvers, userResolvers } from "./graphql/resolvers";
+import { getUserFromToken } from "./middleware/auth";
+import { PrismaClient } from "./generated/prisma";
+import { Context } from "./graphql/types";
 
-// use `prisma` in your application to read and write data in your DB
-const prisma = new PrismaClient()
+const JWT_SECRET = process.env.JWT_SECRET || "your-super-secret-key";
+const prisma = new PrismaClient();
 
-// Merge resolvers (if you decide to keep userResolvers separate and merge them)
+// Merge resolvers
 const combinedResolvers = {
   Query: resolvers.Query,
   Mutation: {
     ...resolvers.Mutation,
-    ...userResolvers.Mutation, // This will overwrite the signup in resolvers.Mutation
+    ...userResolvers.Mutation,
   },
 };
 
@@ -35,58 +35,50 @@ app.use(cors());
 app.use(helmet());
 app.use(express.json());
 
-// Connect to MongoDB
-const MONGODB_URI = process.env.MONGODB_URI ?npm install? 'mongodb://localhost:27017/technexus-blog';
+// Connect to MongoDB (if needed)
+const MONGODB_URI =
+  process.env.MONGODB_URI || "mongodb://localhost:27017/technexus-blog";
 
-mongoose.connect(MONGODB_URI)
+mongoose
+  .connect(MONGODB_URI)
   .then(() => {
-    console.log('Connected to MongoDB');
+    console.log("Connected to MongoDB");
   })
   .catch((error) => {
-    console.error('MongoDB connection error:', error);
+    console.error("MongoDB connection error:", error);
   });
 
 // Initialize Apollo Server
-async function startApolloServer() {
-  const server = new ApolloServer({
+async function startServer() {
+  const server = new ApolloServer<Context>({
     typeDefs,
-    resolvers,
-    context: ({ req }) => {
-      // Add authentication context here
-      return { req };
+    resolvers: combinedResolvers,
+    formatError: (error) => {
+      console.error("GraphQL Error:", error);
+      return error;
     },
   });
 
   await server.start();
-  server.applyMiddleware({ app, path: '/graphql' });
+
+  // Apply middleware
+  app.use(
+    "/graphql",
+    expressMiddleware(server, {
+      context: async ({ req }) => {
+        const token = req.headers.authorization?.split(" ")[1] || "";
+        const user = await getUserFromToken(token, JWT_SECRET, prisma);
+        return { prisma, user };
+      },
+    })
+  );
 
   // Start the server
   app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
-    console.log(`GraphQL endpoint at http://localhost:${PORT}${server.graphqlPath}`);
+    console.log(`🚀 Server ready at http://localhost:${PORT}/graphql`);
   });
 }
 
-startApolloServer().catch((error) => {
-  console.error('Failed to start server:', error);
+startServer().catch((error) => {
+  console.error("Failed to start server:", error);
 });
-
-
-const server = new ApolloServer<Context>({
-  typeDefs,
-  resolvers: combinedResolvers, // Or just 'resolvers' if you consolidate signup
-});
-
-async function startServer() {
-  const { url } = await startStandaloneServer(server, {
-    context: async ({ req }) => {
-      const token = req.headers.authorization?.split(' ')[1] || '';
-      const user = await getUserFromToken(token, JWT_SECRET!, prisma); // Pass JWT_SECRET here
-      return { prisma, user };
-    },
-    listen: { port: 4000 },
-  });
-  console.log(`🚀 Server ready at ${url}`);
-}
-
-startServer();

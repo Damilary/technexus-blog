@@ -1,5 +1,5 @@
 // c:\Users\USER\Music\technexus-blog\backend\src\db.ts
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "./generated/prisma";
 
 declare global {
   // allow global `var` declarations
@@ -10,9 +10,9 @@ declare global {
 export const prisma =
   global.prisma ||
   new PrismaClient({
-    log: ['query', 'info', 'warn', 'error'], // Optional: configure logging
+    log: ["query", "info", "warn", "error"], // Optional: configure logging
   });
 
-if (process.env.NODE_ENV !== 'production') global.prisma = prisma;
+if (process.env.NODE_ENV !== "production") global.prisma = prisma;
 
 export default prisma;

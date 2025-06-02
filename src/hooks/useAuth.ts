@@ -2,14 +2,8 @@
 
 import { useEffect, useContext, createContext } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
-import { UserRole, User } from "../graphql/types";
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  avatar?: string;
-}
+import type { User } from "../types/user";
+import { UserRole } from "../types/user";
 
 interface AuthContextType {
   user: User | null;

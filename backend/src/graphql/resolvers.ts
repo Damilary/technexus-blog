@@ -1,5 +1,5 @@
 // backend/src/graphql/resolvers.ts
-import { PrismaClient } from "../generated/prisma";  // Import PrismaClient
+import { PrismaClient } from "../generated/prisma"; // Import PrismaClient
 import {
   // These are now imported from the central types.ts
   Context,
@@ -95,11 +95,27 @@ export const resolvers = {
       { user, prisma }: Context
     ): Promise<User | undefined> => {
       if (!user) return undefined;
+
       const fullUser = await prisma.user.findUnique({
         where: { id: user.id },
-        select: { id: true, username: true, email: true },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          role: true,
+          firstName: true,
+          lastName: true,
+          createdAt: true,
+          updatedAt: true,
+        },
       });
-      return fullUser ?? undefined;
+
+      if (!fullUser) return undefined;
+
+      return {
+        ...fullUser,
+        role: fullUser.role as UserRole,
+      };
     },
   },
 
@@ -273,23 +289,35 @@ export const userResolvers = {
       _: never,
       { input }: { input: CreateUserInput },
       { prisma }: Context
-    ) => {
+    ): Promise<AuthPayload> => {
       const hashedPassword = await hash(input.password, 10);
-
       const user = await prisma.user.create({
         data: {
           email: input.email,
-          password: hashedPassword,
-          name: input.name,
+          username: input.email.split("@")[0], // Default username from email
+          passwordHash: hashedPassword,
           role: input.role ?? UserRole.USER,
+        },
+        select: {
+          id: true,
+          email: true,
+          username: true,
+          role: true,
+          firstName: true,
+          lastName: true,
+          createdAt: true,
+          updatedAt: true,
         },
       });
 
-      const token = sign({ userId: user.id }, process.env.JWT_SECRET!, {
-        expiresIn: "7d",
-      });
-
-      return { token, user };
+      const token = sign({ userId: user.id }, JWT_SECRET);
+      return {
+        token,
+        user: {
+          ...user,
+          role: user.role as UserRole,
+        },
+      };
     },
 
     updateUserRole: async (

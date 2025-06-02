@@ -15,13 +15,13 @@ datasource db {
 }
 
 model User {
-  id           String    @id @default(cuid())
-  username     String    @unique
+  id           String    @id @default(uuid())
   email        String    @unique
+  role         UserRole  @default(USER)
+  username     String    @unique
   passwordHash String
   firstName    String? // Optional fields use ?
   lastName     String?
-  role         UserRole  @default(READER)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   articles     Article[] // Relation to Article model (one-to-many)
@@ -33,40 +33,36 @@ model User {
 }
 
 model Article {
-  id              String    @id @default(cuid())
-  title           String
-  slug            String    @unique
-  excerpt         String?
+  id                  String     @id @default(cuid())
+  title               String
+  slug                String     @unique
+  excerpt             String?
   // content             Json // For ContentBlock[], Prisma's Json type can store structured data
-  publishedDate   DateTime?
-  updatedDate     DateTime  @updatedAt
-  readTimeMinutes Int?
-  isFeatured      Boolean   @default(false)
-  isPublished     Boolean   @default(false)
-  isTopPick       Boolean   @default(false)
-  topPickOrder    Int?
-  authorId        String // Foreign key for the author
-  author          User      @relation(fields: [authorId], references: [id]) // Relation to User model
-  // primaryCategoryId   String?
-  // primaryCategory     Category? @relation("PrimaryArticles", fields: [primaryCategoryId], references: [id])
-  // secondaryCategories Category[] @relation("SecondaryArticles")
-  // tags                String[] // Prisma doesn't directly support string arrays for all DBs, consider a Tag model
-  // statistics          ArticleStatistics?
-  comments        Comment[]
+  publishedDate       DateTime?
+  updatedDate         DateTime   @updatedAt
+  readTimeMinutes     Int?
+  isFeatured          Boolean    @default(false)
+  isPublished         Boolean    @default(false)
+  isTopPick           Boolean    @default(false)
+  topPickOrder        Int?
+  authorId            String // Foreign key for the author
+  author              User       @relation(fields: [authorId], references: [id]) // Relation to User model
+  primaryCategoryId   String?
+  primaryCategory     Category?  @relation("PrimaryArticles", fields: [primaryCategoryId], references: [id])
+  secondaryCategories Category[] @relation("SecondaryArticles")
+  comments            Comment[]
   // Add other fields and relations
 }
 
-// You'll need to define other models like Category, Comment, Author, UserPreferences etc.
-// Example for Category:
-// model Category {
-//   id          String    @id @default(cuid())
-//   name        String    @unique
-//   slug        String    @unique
-//   description String?
-//   iconUrl     String?
-//   articles    Article[] @relation("PrimaryArticles") // Articles where this is primary
-//   secondaryArticles Article[] @relation("SecondaryArticles") // Articles where this is secondary
-// }
+model Category {
+  id                String    @id @default(cuid())
+  name              String    @unique
+  slug              String    @unique
+  description       String?
+  iconUrl           String?
+  articles          Article[] @relation("PrimaryArticles") // Articles where this is primary
+  secondaryArticles Article[] @relation("SecondaryArticles") // Articles where this is secondary
+}
 
 model Comment {
   id        String   @id @default(cuid())
@@ -82,7 +78,7 @@ model Comment {
 }
 
 enum UserRole {
-  READER
+  USER
   CONTRIBUTOR
   EDITOR
   ADMIN

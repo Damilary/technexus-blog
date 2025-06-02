@@ -1,4 +1,4 @@
-import { PrismaClient, User as PrismaUser } from '../generated/prisma' // Import PrismaUser
+import { PrismaClient, User as PrismaUser } from "../generated/prisma"; // Import PrismaUser
 
 // Define a "safe" User type for API responses, excluding sensitive fields like passwordHash
 export enum UserRole {
@@ -11,10 +11,12 @@ export enum UserRole {
 export interface User {
   id: string;
   email: string;
+  username: string;
   role: UserRole;
-  name?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  firstName?: string | null;
+  lastName?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface CreateUserInput {
@@ -25,7 +27,8 @@ export interface CreateUserInput {
 }
 
 export interface Context {
- 
+  prisma: PrismaClient;
+  user: User | null;
 }
 
 export interface ArticleInput {
@@ -50,11 +53,4 @@ export interface AuthenticatedUserContext {
   id: string;
   email: string;
   role: UserRole; // Make sure UserRole is correctly defined and imported
-}
-
-export interface Context {
-  prisma: PrismaClient;
-  // The user in context might have more info than the basic User interface,
-  // e.g., from JWT payload, like role.
-  user?: AuthenticatedUserContext; // Use the more specific type
 }
