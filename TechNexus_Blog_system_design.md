@@ -150,11 +150,11 @@ flowchart TB
     InteractionService -->|Cache| Redis
 ```
 
-## 3. Database Schema Design
+## 4. Database Schema Design
 
 The MongoDB schema design follows a flexible document model that supports the content types and relationships defined in the class diagram:
 
-## 4.1 Users Collection
+### 4.1 Users Collection
 
 ```javascript
 {
@@ -179,7 +179,7 @@ The MongoDB schema design follows a flexible document model that supports the co
 }
 ```
 
-## 4.2 Authors Collection
+### 4.2 Authors Collection
 
 ```javascript
 {
@@ -196,7 +196,7 @@ The MongoDB schema design follows a flexible document model that supports the co
 }
 ```
 
-## 4.3 Articles Collection
+### 4.3 Articles Collection
 
 ```javascript
 {
@@ -244,7 +244,7 @@ The MongoDB schema design follows a flexible document model that supports the co
  }
 ```
 
-## 4.4 Categories Collection
+### 4.4 Categories Collection
 
 ```javascript
 {
@@ -259,7 +259,7 @@ The MongoDB schema design follows a flexible document model that supports the co
 }
 ```
 
-## 4.5 Comments Collection
+### 4.5 Comments Collection
 
 ```javascript
 {
@@ -276,7 +276,7 @@ The MongoDB schema design follows a flexible document model that supports the co
 }
 ```
 
-## 4.6 LearningPaths Collection
+### 4.6 LearningPaths Collection
 
 ```javascript
 {
@@ -297,7 +297,7 @@ The MongoDB schema design follows a flexible document model that supports the co
 }
 ```
 
-## 4.7 Newsletters Collection
+### 4.7 Newsletters Collection
 
 ```javascript
 {
@@ -319,7 +319,7 @@ The API design follows RESTful principles with GraphQL support for complex queri
 
 ## 5.1 REST API Endpoints
 
-## 5.1.1 Authentication
+### 5.1.1 Authentication
 
 - `POST /api/auth/register` - Register a new user
 - `POST /api/auth/login` - Login and receive JWT token
@@ -330,7 +330,7 @@ The API design follows RESTful principles with GraphQL support for complex queri
 - `POST /api/auth/reset-password` - Reset password with token
 - `POST /api/auth/oauth/:provider` - OAuth authentication (Supported providers: Google, GitHub, Instagram, Facebook, X, LinkedIn)
 
-## 5.1.2 Users & Authors
+### 5.1.2 Users & Authors
 
 - `GET /api/users/:id` - Get user profile
 - `PUT /api/users/:id` - Update user profile
@@ -341,7 +341,7 @@ The API design follows RESTful principles with GraphQL support for complex queri
 - `POST /api/authors` - Create author profile (for contributors)
 - `PUT /api/authors/:id` - Update author profile
 
-## 5.1.3 Articles & Content
+### 5.1.3 Articles & Content
 
 - `GET /api/articles` - List articles with filters
 - `GET /api/articles/featured` - Get featured articles
@@ -357,7 +357,7 @@ The API design follows RESTful principles with GraphQL support for complex queri
 - `POST /api/articles/:id/save` - Save article to reading list
 - `POST /api/articles/:id/view` - Record article view
 
-## 5.1.4 Categories & Tags
+### 5.1.4 Categories & Tags
 
 - `GET /api/categories` - List all categories
 - `GET /api/categories/:slug` - Get category by slug
@@ -365,12 +365,12 @@ The API design follows RESTful principles with GraphQL support for complex queri
 - `GET /api/tags` - List all tags
 - `GET /api/tags/:slug/articles` - Get articles with tag
 
-## 5.1.5 Search
+### 5.1.5 Search
 
 - `GET /api/search` - Search articles with filters
 - `GET /api/search/suggestions` - Get search suggestions
 
-## 5.1.6 Interactive Content
+### 5.1.6 Interactive Content
 
 - `GET /api/code-playgrounds/:id` - Get code playground data
 - `POST /api/code-playgrounds/:id/execute` - Execute code
@@ -378,7 +378,7 @@ The API design follows RESTful principles with GraphQL support for complex queri
 - `GET /api/interactive/:id` - Get interactive element data
 - `POST /api/interactive/:id/state` - Update interactive state
 
-## 5.1.7 Learning
+### 5.1.7 Learning
 
 - `GET /api/learning-paths` - List learning paths
 - `GET /api/learning-paths/:slug` - Get learning path
@@ -386,13 +386,13 @@ The API design follows RESTful principles with GraphQL support for complex queri
 - `GET /api/learning-paths/:id/progress` - Get user progress
 - `POST /api/learning-paths/:id/progress` - Update user progress
 
-## 5.1.8 Newsletters
+### 5.1.8 Newsletters
 
 - `GET /api/newsletters` - List available newsletters
 - `POST /api/newsletters/subscribe` - Subscribe to newsletter
 - `DELETE /api/newsletters/unsubscribe` - Unsubscribe from newsletter
 
-## 5.1.9 Admin
+### 5.1.9 Admin
 
 - `GET /api/admin/dashboard` - Get admin dashboard metrics
 - `GET /api/admin/users` - Manage users
@@ -402,8 +402,6 @@ The API design follows RESTful principles with GraphQL support for complex queri
 Note: API endpoints for the homepage content blocks (Hero, Featured, Category Showcases, Popular, Top Picks) will need to be optimized for efficient data retrieval and aggregation.
 
 _Implementation Note: API development will be phased. Initial phases will focus on core authentication, user management, and content retrieval (articles, categories). Subsequent phases will build out APIs for interactive features, learning paths, and advanced personalization._
-
-6. **Backend as a Service (BaaS) Evaluation**: While a custom backend stack is outlined (Node.js, Express, MongoDB), the potential use of a BaaS like Supabase for specific services (e.g., authentication, database, storage) will be evaluated for rapid development of foundational features, ensuring it aligns with the overall microservice architecture goals if adopted partially or fully.
 
 ## 5.2 GraphQL Schema (Key Parts)
 
@@ -515,11 +513,15 @@ type Author {
 }
 ```
 
-## 6 Frontend Wireframes & Design
+## 6. Backend as a Service (BaaS) Evaluation
 
-## 6.1 Brand Elements
+While a custom backend stack is outlined (Node.js, Express, MongoDB), the potential use of a BaaS like Supabase for specific services (e.g., authentication, database, storage) will be evaluated for rapid development of foundational features, ensuring it aligns with the overall microservice architecture goals if adopted partially or fully.
 
-## 6.1.1 Color Palette
+## 7. Frontend Wireframes & Design
+
+### 7.1 Brand Elements
+
+#### 7.1.1 Color Palette
 
 As specified in the PRD:
 
@@ -542,7 +544,7 @@ As specified in the PRD:
   - Error: #EF4444
   - Info: #3B82F6
 
-## 6.1.2 Typography
+#### 7.1.2 Typography
 
 - **Primary Font**: Inter (Sans-serif)
 
@@ -558,11 +560,11 @@ As specified in the PRD:
   - Base size: 16px
   - Scale: 1.250 (major third) typographic scale
 
-## 6.2 Wireframes
+### 7.2 Wireframes
 
 The following provides wireframe descriptions for key pages of the TechNexus Blog:
 
-## 6.2.1 Homepage Wireframe
+#### 7.2.1 Homepage Wireframe
 
 ```mermaid
 graph TD
@@ -580,7 +582,7 @@ graph TD
 
 The homepage features a clean, modern design with a hero section showcasing a featured article, followed by a grid of featured content. Category quick links provide easy navigation to main topics. For logged-in users, a personalized section displays recommended content based on preferences and reading history.
 
-## 6.2.2 Category Page Wireframe
+#### 7.2.2 Category Page Wireframe
 
 ```mermaid
 graph TD
@@ -598,7 +600,7 @@ graph TD
 
 Category pages start with a distinctive header that includes the category icon and description. A filter bar allows users to refine content by expertise level, format, and date. Featured content for the category is prominently displayed, followed by subcategory navigation tabs and a grid of articles with visual indicators for content formats.
 
-## 6.2.3 Article Page Wireframe
+#### 7.2.3 Article Page Wireframe
 
 ```mermaid
 graph TD
@@ -617,7 +619,7 @@ graph TD
 
 Article pages prioritize readability with a clean layout and typography optimized for long-form content. The header includes essential metadata like reading time and expertise level. For technical articles, code blocks use syntax highlighting and copy functionality. Interactive elements are clearly delineated from static content. The right sidebar (on desktop) includes a sticky table of contents for easy navigation of longer articles.
 
-## 6.2.4 User Profile Wireframe
+#### 7.2.4 User Profile Wireframe
 
 ```mermaid
 graph TD
@@ -634,7 +636,7 @@ graph TD
 
 The user profile includes sections for saved articles, reading history, and learning path progress. A preference management panel allows users to customize their content experience by selecting preferred categories, formats, and expertise levels.
 
-## 6.2.5 Search Results Wireframe
+#### 7.2.5 Search Results Wireframe
 
 ```mermaid
 graph TD
@@ -651,11 +653,11 @@ graph TD
 
 The search page features an enhanced search bar with auto-suggestions as users type. Results are organized by type (articles, authors, learning paths) with relevant sections highlighted. An advanced filter panel allows users to refine results by multiple criteria.
 
-## 7. Program call flow
+## 8. Program Call Flow
 
 The sequence diagram illustrates key user flows including authentication, content browsing, article reading, commenting, and interactive content engagement.
 
-## 8. Anything UNCLEAR
+## 9. Anything UNCLEAR
 
 1. **Content Approval Workflow**: The PRD mentions editorial workflows but doesn't specify if all content requires approval or if certain trusted contributors can publish directly. We've designed for a flexible workflow that can accommodate both approaches.
 
