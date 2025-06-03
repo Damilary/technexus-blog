@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { NavigationItem } from '@/components/layout/Header';
-import { User } from '@/hooks/useAuth';
+import type { User } from '@/types/user';
 import { SearchBar } from '@/components/ui/SearchBar';
 import { Button } from '@/components/ui/Button';
 
@@ -68,10 +68,10 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
           {user ? (
             <div className="flex items-center space-x-3 py-2">
               <div className="h-10 w-10 rounded-full bg-primary text-white flex items-center justify-center text-lg font-medium">
-                {user.name.charAt(0)}
+                {user.firstName?.[0]?.toUpperCase() || user.username[0].toUpperCase()}
               </div>
               <div>
-                <p className="font-medium text-dark dark:text-white">{user.name}</p>
+                <p className="font-medium text-dark dark:text-white">{user.firstName || user.username}</p>
                 <p className="text-sm text-medium">{user.email}</p>
               </div>
             </div>

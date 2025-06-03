@@ -34,8 +34,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ article: initialArticl
   const { data, isLoading, error } = useQuery({
     queryKey: ['heroArticle'],
     queryFn: async () => {
-      const { heroArticle } = await fetchGraphQL(GET_HERO_ARTICLE);
-      return heroArticle as HeroArticle;
+      const response = await fetchGraphQL(GET_HERO_ARTICLE);
+      return (response as { heroArticle: HeroArticle }).heroArticle;
     },
     // If we have initial data (e.g., from SSR), use it
     initialData: initialArticle,

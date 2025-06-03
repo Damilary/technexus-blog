@@ -3,7 +3,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import type { User } from "@/types/user";
 import Link from "next/link";
-import Image from "next/image";
 
 interface UserMenuProps {
   user: User;
@@ -63,31 +62,20 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
       <button
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center"        aria-expanded={isOpen ? "true" : "false"}
+        className="flex items-center"
+        aria-expanded={isOpen ? "true" : "false"}
         aria-haspopup="true"
         aria-controls="user-menu"
       >
         <span className="sr-only">
           Open user menu for {user.firstName || user.username}
         </span>
-        {user.avatar ? (
-          <Image
-            className="h-8 w-8 rounded-full object-cover"
-            src={user.avatar}
-            alt={`${user.name}'s profile`}
-            width={32}
-            height={32}
-          />
-        ) : (
-          <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center text-xs font-semibold">
-            {user.name
-              ?.split(" ")
-              .map((n) => n[0])
-              .join("")
-              .toUpperCase() || user.name?.charAt(0).toUpperCase()}
-          </div>
-        )}
-        <span className="ml-2 hidden md:block">{user.name}</span>
+        <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center text-xs font-semibold">
+          {user.firstName?.[0]?.toUpperCase() || user.username[0].toUpperCase()}
+        </div>
+        <span className="ml-2 hidden md:block">
+          {user.firstName || user.username}
+        </span>
       </button>
 
       {isOpen && (
