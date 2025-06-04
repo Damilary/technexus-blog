@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import type { User } from "@/types/user";
 import Link from "next/link";
 
@@ -13,19 +13,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const itemElementsRef = useRef<(HTMLElement | null)[]>([]);
-  const [typeAheadBuffer, setTypeAheadBuffer] = useState("");
-  const typeAheadTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Helper to get currently focusable items
-  const getFocusableItems = useCallback(() => {
-    return itemElementsRef.current.filter(
-      (item) =>
-        item &&
-        item.getAttribute("aria-disabled") !== "true" &&
-        !item.hasAttribute("disabled")
-    ) as HTMLElement[];
-  }, []);
+  const itemElementsRef = useRef<Array<HTMLElement | null>>([]);
 
   // Effect for closing menu on outside click or Escape key
   useEffect(() => {
@@ -57,25 +45,25 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
     };
   }, [isOpen]);
 
+  const displayName = user.firstName ?? user.username;
+  const displayInitial =
+    (user.firstName?.[0] ?? user.username[0])?.toUpperCase() ?? "?";
+
   return (
-    <div className="relative" role="navigation">
+    <nav className="relative">
       <button
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center"
-        aria-expanded={isOpen ? "true" : "false"}
-        aria-haspopup="true"
+        aria-expanded={isOpen}
+        aria-haspopup="menu"
         aria-controls="user-menu"
       >
-        <span className="sr-only">
-          Open user menu for {user.firstName || user.username}
-        </span>
+        <span className="sr-only">Open user menu for {displayName}</span>
         <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center text-xs font-semibold">
-          {user.firstName?.[0]?.toUpperCase() || user.username[0].toUpperCase()}
+          {displayInitial}
         </div>
-        <span className="ml-2 hidden md:block">
-          {user.firstName || user.username}
-        </span>
+        <span className="ml-2 hidden md:block">{displayName}</span>
       </button>
 
       {isOpen && (
@@ -92,8 +80,9 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
               className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               role="menuitem"
               ref={(el) => {
-                if (el) itemElementsRef.current[0] = el;
+                itemElementsRef.current[0] = el;
               }}
+              tabIndex={isOpen ? 0 : -1}
             >
               Your Profile
             </Link>
@@ -102,8 +91,9 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
               className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               role="menuitem"
               ref={(el) => {
-                if (el) itemElementsRef.current[1] = el;
+                itemElementsRef.current[1] = el;
               }}
+              tabIndex={isOpen ? 0 : -1}
             >
               Settings
             </Link>
@@ -112,14 +102,15 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
               className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               role="menuitem"
               ref={(el) => {
-                if (el) itemElementsRef.current[2] = el;
+                itemElementsRef.current[2] = el;
               }}
+              tabIndex={isOpen ? 0 : -1}
             >
               Sign out
             </button>
           </div>
         </div>
       )}
-    </div>
+    </nav>
   );
 };
