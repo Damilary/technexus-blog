@@ -62,3 +62,7 @@ logs/
 .temp/
 
 /generated/prisma
+
+
+#Ignore vscode AI rules
+.github\copilot-instructions.md
