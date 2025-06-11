@@ -36,7 +36,7 @@ describe('GraphQL User Resolvers', () => {
   describe('signup Mutation', () => {
     it('should create a new user and return a token on successful signup', async () => {
       const args = { name: 'New User', email: 'new@example.com', password: 'password123' };
-      const hashedPassword = 'hashedPassword';
+      const hashedPassword = await bcrypt.hash(args.password, 10);
       const mockUser = { id: '2', ...args, password: hashedPassword };
       const token = 'mockToken';
 
