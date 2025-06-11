@@ -84,7 +84,7 @@ describe('GraphQL User Resolvers', () => {
 
       expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { email: args.email } });
       expect(bcrypt.compare).toHaveBeenCalledWith(args.password, mockUser.password);
-      expect(jwt.sign).toHaveBeenCalledWith({ userId: mockUser.id }, process.env.JWT_SECRET || "your-super-secret-key", { expiresIn: '1d' });
+      expect(jwt.sign).toHaveBeenCalledWith({ userId: mockUser.id }, JWT_SECRET_TEST_VALUE, { expiresIn: '1d' }); // Assuming JWT_SECRET_TEST_VALUE is process.env.JWT_SECRET
       expect(result).toEqual({ token, user: mockUser });
     });
 
