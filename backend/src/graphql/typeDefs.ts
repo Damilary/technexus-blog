@@ -3,6 +3,7 @@ import { gql } from "apollo-server-express";
 
 export const typeDefs = gql`
   scalar JSON # Added JSON scalar
+  scalar DateTime
 
   type User {
     id: ID!
@@ -44,14 +45,14 @@ export const typeDefs = gql`
     # category: Category! # Assuming relation, might be complex for direct input
     # tags: [Tag!] # Assuming relation
     author: User! # Assuming relation, authorId will be in input or context
-    publishedDate: String # Or DateTime
-    updatedDate: String! # Or DateTime
+    publishedDate: DateTime # Or DateTime
+    updatedDate: DateTime! # Or DateTime
     readTimeMinutes: Int
     isFeatured: Boolean!
     isPublished: Boolean!
     isTopPick: Boolean!
     topPickOrder: Int
-    authorId: String! # Added to match subtask example structure
+    authorId: ID! # Added to match subtask example structure
     primaryCategoryId: String # Added to match subtask example structure
     content: String # Made optional for Markdown content
     blocks: JSON # For block-based editor content
@@ -107,8 +108,8 @@ export const typeDefs = gql`
     primaryCategoryId: String # Optional
     # categoryId: ID! # Replaced by primaryCategoryId to match Article type
     # tagIds: [ID!] # Assuming tags are handled differently or as separate relation mutations
-    # coverImage: String # Already present in Article, should be here too
-    # expertiseLevel: ExpertiseLevel! # Already present in Article, should be here too
+    coverImage: String
+    expertiseLevel: ExpertiseLevel
     content: String # Optional new field
     blocks: JSON # Optional new field
   }
