@@ -17,7 +17,7 @@ jest.mock('@prisma/client', () => {
   return { PrismaClient: jest.fn(() => mPrismaClient) };
 });
 
-const decodedToken = jwt.verify(token, JWT_SECRET); // Use the JWT_SECRET in a function
+console.log(decodedToken);
 
 describe('GraphQL User Resolvers', () => {
   let prisma: PrismaClient;
