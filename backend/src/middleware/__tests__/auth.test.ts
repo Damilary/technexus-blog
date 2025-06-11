@@ -13,7 +13,7 @@ jest.mock('@prisma/client', () => {
   return { PrismaClient: jest.fn(() => mPrismaClient) };
 });
 
-const JWT_SECRET = process.env.JWT_SECRET || 'default-secret';
+const JWT_SECRET = process.env.JWT_SECRET ?? 'default-secret';
 
 describe('getUserFromToken', () => {
   let prisma: PrismaClient;
