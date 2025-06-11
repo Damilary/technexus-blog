@@ -53,8 +53,7 @@ describe('getUserFromToken', () => {
 
   it('should return null if token is expired', async () => {
     const mockToken = 'expired-token';
-    const
-      error = new jwt.TokenExpiredError('jwt expired', new Date());
+    const error = new jwt.TokenExpiredError('jwt expired', new Date());
     (jwt.verify as jest.Mock).mockImplementation(() => {
       throw error;
     });
