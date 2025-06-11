@@ -1,5 +1,5 @@
 // src/lib/graphql/queries.ts
-import { gql } from 'graphql-request';
+import { gql } from "graphql-request";
 
 // Fragment for Author details (including bio)
 export const AUTHOR_FRAGMENT = gql`
@@ -164,13 +164,19 @@ export const GET_CATEGORY_DETAILS = gql`
 
 export const GET_CATEGORY_PAGE_ARTICLES = gql`
   query GetCategoryPageArticles(
-    $slug: String!,
-    $limit: Int = 9,
-    $offset: Int = 0,
-    $sortBy: String = "newest",
+    $slug: String!
+    $limit: Int = 9
+    $offset: Int = 0
+    $sortBy: String = "newest"
     $tags: [String!] = []
   ) {
-    categoryArticles(slug: $slug, limit: $limit, offset: $offset, sortBy: $sortBy, tags: $tags) {
+    categoryArticles(
+      slug: $slug
+      limit: $limit
+      offset: $offset
+      sortBy: $sortBy
+      tags: $tags
+    ) {
       articles {
         ...ArticleFields
       }
@@ -262,17 +268,17 @@ export const UPDATE_USER_PROFILE = gql`
 
 export const UPDATE_USER_PREFERENCES = gql`
   mutation UpdateUserPreferences(
-    $darkMode: Boolean,
-    $emailNotificationsEnabled: Boolean,
-    $favoriteCategories: [String!],
-    $preferredLevel: String,
+    $darkMode: Boolean
+    $emailNotificationsEnabled: Boolean
+    $favoriteCategories: [String!]
+    $preferredLevel: String
     $preferredFormats: [String!]
   ) {
     updateUserPreferences(
-      darkMode: $darkMode,
-      emailNotificationsEnabled: $emailNotificationsEnabled,
-      favoriteCategories: $favoriteCategories,
-      preferredLevel: $preferredLevel,
+      darkMode: $darkMode
+      emailNotificationsEnabled: $emailNotificationsEnabled
+      favoriteCategories: $favoriteCategories
+      preferredLevel: $preferredLevel
       preferredFormats: $preferredFormats
     ) {
       ...UserPreferencesFields
@@ -283,7 +289,10 @@ export const UPDATE_USER_PREFERENCES = gql`
 
 export const CHANGE_PASSWORD = gql`
   mutation ChangePassword($currentPassword: String!, $newPassword: String!) {
-    changePassword(currentPassword: $currentPassword, newPassword: $newPassword) {
+    changePassword(
+      currentPassword: $currentPassword
+      newPassword: $newPassword
+    ) {
       success
       message
     }
@@ -298,9 +307,6 @@ export const SUBSCRIBE_TO_NEWSLETTER = gql`
     }
   }
 `;
-
-
-
 
 // --- Password Reset Mutations --- //
 
@@ -322,9 +328,6 @@ export const RESET_PASSWORD = gql`
   }
 `;
 
-
-
-
 // --- Email Verification Mutations --- //
 
 export const REQUEST_EMAIL_VERIFICATION = gql`
@@ -341,12 +344,13 @@ export const VERIFY_EMAIL = gql`
     verifyEmail(token: $token) {
       success
       message # e.g., "Email verified successfully." or "Invalid/expired token."
-      user { # Optionally return updated user info
+      user {
+        # Optionally return updated user info
         ...UserFields
         isEmailVerified # Add this field to the User type/fragment if needed
       }
     }
   }
-  ${USER_FRAGMENT} # Include if returning user data
+  ${USER_FRAGMENT}
+  # Include if returning user data
 `;
-

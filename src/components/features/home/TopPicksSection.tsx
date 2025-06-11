@@ -5,7 +5,7 @@ import {
   Article,
   ArticleCard,
 } from "@/components/features/articles/ArticleCard";
-import { useTopPicks } from "@hooks/useTopPicks";
+import { useTopPicks } from "../../hooks/useTopPicks";
 
 interface TopPicksSectionProps {
   articles?: Article[]; // Optional for SSR or static data

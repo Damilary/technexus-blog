@@ -1,8 +1,8 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { GET_FEATURED_ARTICLES } from "@lib/queries";
-import { fetchGraphQL } from "@lib/fetchGraphQL";
+import { GET_FEATURED_ARTICLES } from "../lib/graphql/queries";
+import { fetchGraphQL } from "../lib/api/fetchGraphQL";
 import { Article } from "@/components/features/articles/ArticleCard";
 
 interface UseFeaturedArticlesOptions {
@@ -23,7 +23,8 @@ export function useFeaturedArticles(options: UseFeaturedArticlesOptions = {}) {
   return useQuery({
     queryKey: ["featuredArticles", limit],
     queryFn: async () => {
-      const { featuredArticles } = await fetchGraphQL(GET_FEATURED_ARTICLES, {
+      // Explicitly cast GET_FEATURED_ARTICLES to DocumentNode as a workaround
+      const { featuredArticles } = await fetchGraphQL(GET_FEATURED_ARTICLES as any, { // Using 'any' temporarily for casting
         limit,
       });
       return featuredArticles as Article[];

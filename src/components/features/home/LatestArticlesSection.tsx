@@ -1,3 +1,7 @@
+
+
+'use client';
+
 import React, { useEffect, useRef } from 'react';
 import { ArticleCard, Article } from '@/components/features/articles/ArticleCard';
 import { useLatestArticles } from '@/hooks/useLatestArticles';
