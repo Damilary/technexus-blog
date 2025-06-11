@@ -3,8 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "../generated/prisma";
 import { User, UserRole, Context } from "../graphql/types";
 
-export const SECRET_KEY: Secret =
-  process.env.JWT_SECRET || "your-secret-key-here";
+export const SECRET_KEY: Secret = process.env.JWT_SECRET;
 
 interface TokenPayload {
   userId: string;

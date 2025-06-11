@@ -1,0 +1,35 @@
+name: CI Checks
+
+on:
+  push:
+    branches: [ main ] # Adjust if your main branch is named differently (e.g., master)
+  pull_request:
+    branches: [ main ] # Adjust if your main branch is named differently
+
+jobs:
+  lint_and_test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20 # Or your project's Node.js version
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install backend dependencies
+        run: npm ci --prefix backend
+
+      - name: Run linter (Frontend/Root)
+        run: npm run lint --if-present # Next.js lint from root
+
+      - name: Run linter (Backend)
+        run: npm run lint --prefix backend
+
+      - name: Run backend tests
+        run: npm test --prefix backend
