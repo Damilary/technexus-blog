@@ -23,7 +23,7 @@ import { getUserFromToken } from "./middleware/auth";
 import { PrismaClient } from "./generated/prisma";
 import { Context } from "./graphql/types";
 
-const JWT_SECRET = process.env.JWT_SECRET!; // Non-null assertion after check
+const JWT_SECRET = process.env.JWT_SECRET || (() => { throw new Error("JWT_SECRET is not defined"); })();
 const prisma = new PrismaClient();
 
 // Merge resolvers
