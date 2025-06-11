@@ -1,31 +1,29 @@
 {
-  "name": "@Damilary/technexus-blog", // FIX 1: Scoped name for GitHub Packages
+  "name": "@damilary/technexus-blog",
   "version": "0.1.0",
-  "private": false, // FIX 2: Should be false if you intend to publish
-  "description": "A Next.js project bootstrapped with create-next-app, intended for publishing to GitHub Packages.", // IMPROVEMENT: More descriptive description
-  "main": "dist/index.js", // FIX 3: Point to a build output entry file (assuming a build step)
+  "private": false,
+  "description": "A Next.js project bootstrapped with create-next-app, intended for publishing to GitHub Packages.",
+  "main": "dist/index.js",
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build", // This builds the Next.js app for deployment, not necessarily for a publishable package
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "npm run build:package", // FIX 4: Add a prepare script for building the package
-    "build:package": "echo 'Add your package build command here, e.g., tsc --outDir dist'" // FIX 5: Placeholder for actual package build
+    "prepare": "npm run build:package",
+    "build:package": "echo 'Add your package build command here, e.g., tsc --outDir dist'"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.76.1",
-<<<<<<< HEAD
     "clsx": "^2.1.1",
     "framer-motion": "^12.12.1",
-=======
-    "framer-motion": "^12.12.1", // Double check this version
->>>>>>> 29ea8b0d612ff0c6c0f77fa54afda453af57e447
     "graphql-request": "^7.1.2",
+    "lucide-react": "^0.514.0",
     "next": "15.3.2",
     "prismjs": "^1.30.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.56.4",
+    "react-intersection-observer": "^9.16.0",
     "react-markdown": "^10.1.0",
     "sharp": "^0.34.2",
     "swr": "^2.3.3",
@@ -50,14 +48,18 @@
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   },
-  "publishConfig": { // FIX 6: Add publishConfig for GitHub Packages
+  "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
   },
-  "repository": { // FIX 7: Add repository info
+  "repository": {
     "type": "git",
     "url": "git+https://github.com/Damilary/technexus-blog.git"
   },
-  "keywords": ["nextjs", "blog", "github-packages"], // IMPROVEMENT: Add keywords
-  "author": "Damilary", // IMPROVEMENT: Add your name
+  "keywords": [
+    "nextjs",
+    "blog",
+    "github-packages"
+  ],
+  "author": "Damilary",
   "license": "ISC"
 }

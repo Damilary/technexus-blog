@@ -1,7 +1,7 @@
 'use client';
 
-import { graphqlClient } from './graphqlClient';
-import { mockGraphQLHandler } from './mockData';
+import { graphqlClient } from '../graphqlClient';
+import { mockGraphQLHandler } from '../mockData';
 
 // Determine if we should use mock data
 // In a real app, this would be controlled by environment variables

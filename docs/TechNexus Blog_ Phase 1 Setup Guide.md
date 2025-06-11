@@ -11,7 +11,7 @@ The TechNexus Blog has been initialized as a modern web application with:
 
 ## Directory Structure
 
-```
+```bash
 technexus-blog/
 ├── src/                      # Frontend source code
 │   ├── app/                  # Next.js App Router pages
@@ -152,47 +152,58 @@ Initial GraphQL schema has been defined with types for:
 ### Frontend Development
 
 1. Navigate to the project directory:
+
    ```bash
    cd technexus-blog
    ```
 
 2. Install dependencies:
+
    ```bash
    pnpm install
    ```
 
 3. Start the development server:
+
    ```bash
    pnpm dev
    ```
 
-4. Open your browser to http://localhost:3000
+4. Open your browser to
+
+<!-- <http://localhost:3000> -->
 
 ### Backend Development
 
 1. Navigate to the backend directory:
+
    ```bash
    cd technexus-blog/backend
    ```
 
 2. Install dependencies:
+
    ```bash
    pnpm install
    ```
 
 3. Create a `.env` file with the following variables:
-   ```
+
+   ```bash
    PORT=4000
    MONGODB_URI=mongodb://localhost:27017/technexus-blog
    JWT_SECRET=your_jwt_secret_here
    ```
 
 4. Start the development server:
+
    ```bash
    pnpm dev
    ```
 
-5. Access the GraphQL playground at http://localhost:4000/graphql
+5. Access the GraphQL playground at
+
+<!-- <http://localhost:4000/graphql> -->
 
 ## Next Steps
 

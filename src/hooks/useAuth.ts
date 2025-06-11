@@ -1,29 +1,30 @@
-"use client";
+'use client';
 
-import { useEffect, useContext, createContext } from "react";
-import { useAuthStore } from "@/store/useAuthStore";
-import type { User } from "../types/user";
-import { UserRole } from "../types/user";
+import { useEffect } from 'react';
+import { useAuthStore } from '@/store/useAuthStore';
 
-interface AuthContextType {
-  user: User | null;
-  hasRole: (roles: UserRole[]) => boolean;
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
 }
 
-export const AuthContext = createContext<AuthContextType>({
-  user: null,
-  hasRole: () => false,
-});
-
 export function useAuth() {
-  const { user, hasRole } = useContext(AuthContext);
+  const { user, isLoading, error, login, logout, signup } = useAuthStore();
+
+  // This is a placeholder for any additional auth logic that might be needed
+  useEffect(() => {
+    // Example: Check token expiration, refresh token, etc.
+  }, []);
 
   return {
     user,
-    hasRole,
+    isLoading,
+    error,
+    login,
+    logout,
+    signup,
     isAuthenticated: !!user,
-    isAdmin: user?.role === UserRole.ADMIN,
-    isEditor: user?.role === UserRole.EDITOR,
-    isContributor: user?.role === UserRole.CONTRIBUTOR,
   };
 }
