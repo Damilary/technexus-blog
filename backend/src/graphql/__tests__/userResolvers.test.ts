@@ -17,7 +17,7 @@ jest.mock('@prisma/client', () => {
   return { PrismaClient: jest.fn(() => mPrismaClient) };
 });
 
-const JWT_SECRET = 'test-secret-for-resolvers'; // Use a different secret or ensure consistency if this is loaded from env
+const JWT_SECRET = process.env.JWT_SECRET || 'default-secret'; // Use an environment variable for the JWT secret
 
 describe('GraphQL User Resolvers', () => {
   let prisma: PrismaClient;
