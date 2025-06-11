@@ -5,7 +5,7 @@ dotenv.config(); // Load environment variables from .env file
 // Startup Environment Variable Checks
 const REQUIRED_ENV_VARS = ["DATABASE_URL", "JWT_SECRET"];
 for (const varName of REQUIRED_ENV_VARS) {
-  if (!process.env[varName]) {
+  if (!Object.prototype.hasOwnProperty.call(process.env, varName)) {
     console.error(`FATAL ERROR: Environment variable ${varName} is not set.`);
     process.exit(1); // Exit if a required variable is missing
   }
