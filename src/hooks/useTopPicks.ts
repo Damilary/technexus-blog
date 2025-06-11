@@ -1,8 +1,8 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { GET_TOP_PICKS } from "@lib/queries";
-import { fetchGraphQL } from "@lib/fetchGraphQL";
+import { GET_TOP_PICKS } from "../lib/graphql/queries";
+import { fetchGraphQL } from "../lib/api/fetchGraphQL";
 import { Article } from "@/components/features/articles/ArticleCard";
 
 interface UseTopPicksOptions {
