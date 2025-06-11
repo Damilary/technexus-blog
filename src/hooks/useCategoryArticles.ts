@@ -1,3 +1,4 @@
+"use client";
 // src/hooks/useCategoryArticles.ts
 import { useQuery } from "@tanstack/react-query";
 import { fetchGraphQL } from "@/lib/api/fetchGraphQL";

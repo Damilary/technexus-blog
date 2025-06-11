@@ -5,7 +5,7 @@ import {
   Article,
   ArticleCard,
 } from "@/components/features/articles/ArticleCard";
-import { useTopPicks } from "../../hooks/useTopPicks";
+import { useTopPicks } from "@/hooks/useTopPicks";
 
 interface TopPicksSectionProps {
   articles?: Article[]; // Optional for SSR or static data
@@ -207,7 +207,7 @@ export const TopPicksSection: React.FC<TopPicksSectionProps> = ({
                   ? "bg-light dark:bg-dark text-dark dark:text-white hover:bg-light-dark dark:hover:bg-dark-light"
                   : "bg-light-dark dark:bg-dark-light text-medium cursor-not-allowed"
               }`}
-              aria-label="Scroll right"
+              aria-label="Scroll right'"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -230,15 +230,19 @@ export const TopPicksSection: React.FC<TopPicksSectionProps> = ({
           className="flex overflow-x-auto pb-6 space-x-6 scrollbar-hide"
           onScroll={checkScrollability}
         >
-          {data.map((article) => (
+          {data.map((article: Article) => ( // Explicitly type article
             <div key={article.id} className="flex-none w-80">
               <ArticleCard
                 article={{
                   ...article,
-                  category: {
-                    ...article.category,
-                    name: "Top Pick",
-                  },
+                  // Assuming 'Top Pick' is a category name or a special case
+                  // Modify this logic based on how categories should be handled
+                  categories: article.categories.map(cat => ({
+                     ...cat,
+                     name: cat.name === 'Top Pick' ? 'Top Pick' : cat.name // Example: keep 'Top Pick' if it exists, otherwise use original
+                  })),
+                  // Or if 'Top Pick' is a fixed label for this section:
+                  // categories: [{ name: "Top Pick", slug: "top-pick" }], // Example: override categories with a fixed one
                 }}
                 className="h-full"
               />

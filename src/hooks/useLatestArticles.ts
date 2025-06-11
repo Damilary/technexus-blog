@@ -3,43 +3,54 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchGraphQL } from "@/lib/api/fetchGraphQL";
 import { GET_LATEST_ARTICLES } from "@/lib/graphql/queries";
 import { Article } from "@/components/features/articles/ArticleCard";
+import { DocumentNode } from "graphql";
+
+interface FetchLatestArticlesParams {
+  pageParam?: number;
+  limit: number;
+}
 
 interface LatestArticlesResponse {
-  latestArticles: Article[];
-  totalArticlesCount: number;
+  articles: Article[];
+  totalCount: number;
 }
 
-const fetchLatestArticles = async ({
-  pageParam = 0,
-  limit = 6,
-}: {
-  pageParam?: number;
-  limit?: number;
-}): Promise<LatestArticlesResponse> => {
-  const offset = pageParam * limit;
-  // Explicitly cast GET_LATEST_ARTICLES to DocumentNode as a workaround
-  const data = await fetchGraphQL(GET_LATEST_ARTICLES as any, { limit, offset }); // Using 'any' temporarily for casting
-  return data as LatestArticlesResponse;
-};
+export const useLatestArticles = () => {
+  const limit = 6;
 
-export function useLatestArticles(limit: number = 6) {
-  return useInfiniteQuery<LatestArticlesResponse, Error>({
-    queryKey: ["latestArticles", limit],
-    queryFn: ({ pageParam }) => fetchLatestArticles({ pageParam, limit }),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages): number | undefined => { // Explicitly type return
-      const currentCount = allPages.reduce(
-        (acc, page) => acc + page.latestArticles.length,
-        0
-      );
-      const totalCount = lastPage.totalArticlesCount;
+  const fetchLatestArticles = async ({ pageParam = 0, limit }: FetchLatestArticlesParams) => {
+    const offset = pageParam * limit;
+    const data = await fetchGraphQL(GET_LATEST_ARTICLES as unknown as DocumentNode, { limit, offset });
+    return data?.latestArticles;
+  };
 
-      if (currentCount >= totalCount) {
-        return undefined; // No more pages
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+  } = useInfiniteQuery(
+    'latestArticles',
+    ({ pageParam }: { pageParam?: number }) => fetchLatestArticles({ pageParam: pageParam, limit: limit }),
+    {
+      getNextPageParam: (lastPage?: LatestArticlesResponse, pages?: LatestArticlesResponse[]) => {
+        if (lastPage?.articles?.length === limit) {
+          return pages.length;
+        } else {
+          return undefined;
+        }
       }
+    }
+  );
 
-      return allPages.length; // Next page number (0-based index)
-    },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-}
+  return {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+  };
+};

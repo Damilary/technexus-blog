@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { GET_FEATURED_ARTICLES } from "../lib/graphql/queries";
 import { fetchGraphQL } from "../lib/api/fetchGraphQL";
 import { Article } from "@/components/features/articles/ArticleCard";
+import { DocumentNode } from "graphql";
 
 interface UseFeaturedArticlesOptions {
   limit?: number;
@@ -24,7 +25,7 @@ export function useFeaturedArticles(options: UseFeaturedArticlesOptions = {}) {
     queryKey: ["featuredArticles", limit],
     queryFn: async () => {
       // Explicitly cast GET_FEATURED_ARTICLES to DocumentNode as a workaround
-      const { featuredArticles } = await fetchGraphQL(GET_FEATURED_ARTICLES as any, { // Using 'any' temporarily for casting
+      const { featuredArticles } = await fetchGraphQL(GET_FEATURED_ARTICLES as unknown as DocumentNode, {
         limit,
       });
       return featuredArticles as Article[];
