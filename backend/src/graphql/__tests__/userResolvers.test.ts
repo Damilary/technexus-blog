@@ -52,7 +52,7 @@ describe('GraphQL User Resolvers', () => {
       expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { email: args.email } });
       expect(bcrypt.hash).toHaveBeenCalledWith(args.password, 10);
       expect(prisma.user.create).toHaveBeenCalledWith({ data: { name: args.name, email: args.email, password: hashedPassword } });
-      expect(jwt.sign).toHaveBeenCalledWith({ userId: mockUser.id }, process.env.JWT_SECRET || "your-super-secret-key", { expiresIn: '1d' });
+      expect(jwt.sign).toHaveBeenCalledWith({ userId: mockUser.id }, process.env.JWT_SECRET ?? "your-super-secret-key", { expiresIn: '1d' });
       expect(result).toEqual({ token, user: mockUser });
     });
 
