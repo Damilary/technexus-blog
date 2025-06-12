@@ -39,7 +39,7 @@ const DateTime = new GraphQLScalarType({
     }
     return null;
   },
-  parseLiteral(ast: any) { // value from the client query
+  parseLiteral(ast: unknown) { // value from the client query
     if (ast.kind === Kind.STRING) {
       return new Date(ast.value);
     }
