@@ -5,10 +5,11 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { User, useAuth } from '@/hooks/useAuth'; // Assuming useAuth provides logout
 import { ChevronDown } from 'lucide-react'; // Optional: add an icon
+import Image from 'next/image';
 
 interface UserMenuProps {
   user: User;
-}
+};
 
 export const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -107,16 +108,18 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center text-sm font-medium text-dark dark:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary rounded-full p-1"
         id="user-menu-button"
-        aria-expanded={isOpen}
+        aria-expanded={isOpen ? "true" : "false"}
         aria-controls="user-menu"
         aria-haspopup="true"
       >
         <span className="sr-only">Open user menu</span>
         {user.avatar ? (
-          <img
+          <Image
             className="h-8 w-8 rounded-full"
             src={user.avatar}
             alt={`${user.name}'s profile`}
+            width={32} // required
+            height={32} // required
           />
         ) : (
           <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center text-xs font-semibold">
@@ -173,4 +176,3 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
     </div>
   );
 };
-

@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+// // import Image from 'next/image';
 import { SearchBar } from '@/components/ui/SearchBar';
 import { Button } from '@/components/ui/Button';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
-import { UserMenu } from '@/components/features/auth/UserMenu';
+import { UserMenu } from '@/hooks/UserMenu';
 import { MobileMenu } from '@/components/layout/MobileMenu';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuth } from '@/hooks/useAuth';
@@ -121,6 +121,7 @@ export const Header: React.FC<HeaderProps> = ({ navigation }) => {
               variant="tertiary"
               className="hidden md:block"
               onClick={() => setShowNewsletterModal(true)}
+              title="Subscribe to our newsletter"
             >
               Subscribe
             </Button>
@@ -144,7 +145,8 @@ export const Header: React.FC<HeaderProps> = ({ navigation }) => {
               type="button"
               className="md:hidden p-2 rounded-md text-medium hover:text-dark dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-expanded={mobileMenuOpen}
+              aria-expanded={mobileMenuOpen ? 'true' : 'false'}
+              title="Open main menu"
             >
               <span className="sr-only">Open main menu</span>
               {mobileMenuOpen ? (
