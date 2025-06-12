@@ -33,7 +33,7 @@ const DateTime = new GraphQLScalarType({
     }
     return null;
   },
-  parseValue(value: any) { // value from the client
+  parseValue(value: unknown) { // value from the client
     if (typeof value === 'string') {
       return new Date(value);
     }
