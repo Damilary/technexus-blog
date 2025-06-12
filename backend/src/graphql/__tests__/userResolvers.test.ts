@@ -29,36 +29,50 @@ describe('GraphQL User Resolvers', () => {
       prisma,
       user: null, // Initially no user in context
     };
+    process.env.JWT_SECRET = 'test-secret'; // Set JWT_SECRET for testing
     jest.clearAllMocks();
   });
 
   // User Resolvers (from userResolvers.Mutation)
   describe('signup Mutation', () => {
     it('should create a new user and return a token on successful signup', async () => {
-      const args = { name: 'New User', email: 'new@example.com', password: 'password123' };
-      const hashedPassword = await bcrypt.hash(args.password, 10);
-      const mockUser = { id: '2', ...args, password: hashedPassword };
+      const args = { input: { name: 'New User', email: 'new@example.com', password: 'password123' } };
+      const hashedPassword = await bcrypt.hash(args.input.password, 10);
+      // name is not used in user creation, username is derived from email
+      const mockUserFromDb = { id: '2', email: args.input.email, username: args.input.email.split('@')[0], password: hashedPassword };
+      const expectedUserResponse = { id: '2', email: args.input.email, username: args.input.email.split('@')[0] };
       const token = 'mockToken';
 
       (prisma.user.findUnique as jest.Mock).mockResolvedValue(null); // No existing user
       (bcrypt.hash as jest.Mock).mockResolvedValue(hashedPassword);
-      (prisma.user.create as jest.Mock).mockResolvedValue(mockUser);
+      (prisma.user.create as jest.Mock).mockResolvedValue(expectedUserResponse); // Prisma create returns selected fields
       (jwt.sign as jest.Mock).mockReturnValue(token);
 
       // Assuming JWT_SECRET is accessible or passed correctly to the actual signup function if it's used there.
       // If JWT_SECRET is directly used from process.env in resolver, this test mock for jwt.sign is fine.
       const result = await userResolvers.Mutation.signup(null, args, mockContext);
 
-      expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { email: args.email } });
-      expect(bcrypt.hash).toHaveBeenCalledWith(args.password, 10);
-      expect(prisma.user.create).toHaveBeenCalledWith({ data: { name: args.name, email: args.email, password: hashedPassword } });
-      expect(jwt.sign).toHaveBeenCalledWith({ userId: mockUser.id }, process.env.JWT_SECRET ?? "your-super-secret-key", { expiresIn: '1d' });
-      expect(result).toEqual({ token, user: mockUser });
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { email: args.input.email } });
+      expect(bcrypt.hash).toHaveBeenCalledWith(args.input.password, 10);
+      expect(prisma.user.create).toHaveBeenCalledWith({
+        data: {
+          email: args.input.email,
+          password: hashedPassword,
+          username: args.input.email.split('@')[0],
+        },
+        select: {
+          id: true,
+          email: true,
+          username: true,
+        },
+      });
+      expect(jwt.sign).toHaveBeenCalledWith({ userId: mockUserFromDb.id }, 'test-secret', { expiresIn: '1d' });
+      expect(result).toEqual({ token, user: expectedUserResponse });
     });
 
     it('should throw an error if email already exists', async () => {
-      const args = { name: 'Existing User', email: 'exists@example.com', password: 'password123' };
-      (prisma.user.findUnique as jest.Mock).mockResolvedValue({ id: '1', email: args.email }); // User exists
+      const args = { input: { name: 'Existing User', email: 'exists@example.com', password: 'password123' } };
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue({ id: '1', email: args.input.email }); // User exists
 
       await expect(userResolvers.Mutation.signup(null, args, mockContext))
         .rejects
@@ -72,8 +86,8 @@ describe('GraphQL User Resolvers', () => {
 
   describe('login Mutation', () => {
     it('should return a token and user on successful login', async () => {
-      const args = { email: 'test@example.com', password: 'password123' };
-      const mockUser = { id: '1', email: args.email, password: 'hashedPassword', name: 'Test User' };
+      const args = { input: { email: 'test@example.com', password: 'password123' } };
+      const mockUser = { id: '1', email: args.input.email, password: 'hashedPassword', name: 'Test User' };
       const token = 'mockToken';
 
       (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
@@ -82,14 +96,14 @@ describe('GraphQL User Resolvers', () => {
 
       const result = await commonResolvers.Mutation.login(null, args, mockContext);
 
-      expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { email: args.email } });
-      expect(bcrypt.compare).toHaveBeenCalledWith(args.password, mockUser.password);
-      expect(jwt.sign).toHaveBeenCalledWith({ userId: mockUser.id }, JWT_SECRET_TEST_VALUE, { expiresIn: '1d' }); // Assuming JWT_SECRET_TEST_VALUE is process.env.JWT_SECRET
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { email: args.input.email } });
+      expect(bcrypt.compare).toHaveBeenCalledWith(args.input.password, mockUser.password);
+      expect(jwt.sign).toHaveBeenCalledWith({ userId: mockUser.id }, 'test-secret', { expiresIn: '1d' });
       expect(result).toEqual({ token, user: mockUser });
     });
 
     it('should throw an error for non-existent email', async () => {
-      const args = { email: 'nouser@example.com', password: 'password123' };
+      const args = { input: { email: 'nouser@example.com', password: 'password123' } };
       (prisma.user.findUnique as jest.Mock).mockResolvedValue(null); // User not found
 
       await expect(commonResolvers.Mutation.login(null, args, mockContext))
@@ -101,8 +115,8 @@ describe('GraphQL User Resolvers', () => {
     });
 
     it('should throw an error for incorrect password', async () => {
-      const args = { email: 'test@example.com', password: 'wrongpassword' };
-      const mockUser = { id: '1', email: args.email, password: 'hashedPassword' };
+      const args = { input: { email: 'test@example.com', password: 'wrongpassword' } };
+      const mockUser = { id: '1', email: args.input.email, password: 'hashedPassword' };
       (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false); // Password does not match
 

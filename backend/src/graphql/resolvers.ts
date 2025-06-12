@@ -22,7 +22,33 @@ const JWT_SECRET = process.env.JWT_SECRET; // Use environment variable
 // Assuming your GraphQL context provides prisma client instance
 // e.g. context: { prisma }
 
+import { GraphQLScalarType, Kind } from 'graphql';
+
+const DateTime = new GraphQLScalarType({
+  name: 'DateTime',
+  description: 'A custom DateTime scalar type',
+  serialize(value: unknown) { // value sent to the client
+    if (value instanceof Date) {
+      return value.toISOString();
+    }
+    return null;
+  },
+  parseValue(value: unknown) { // value from the client
+    if (typeof value === 'string') {
+      return new Date(value);
+    }
+    return null;
+  },
+  parseLiteral(ast: unknown) { // value from the client query
+    if (ast.kind === Kind.STRING) {
+      return new Date(ast.value);
+    }
+    return null;
+  },
+});
+
 export const resolvers = {
+  DateTime, // Add DateTime scalar resolver
   Query: {
     articles: async (
       _: never,
