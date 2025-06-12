@@ -89,7 +89,7 @@ describe('getUserFromToken', () => {
     const mockToken = 'valid-token-no-userid';
     const decodedToken = { email: 'test@example.com' }; // No userId
 
-    (jwt.verify as jest.Mock).mockReturnValue(decodedToken as any); // Cast to any to bypass type check for testing
+    (jwt.verify as jest.Mock).mockReturnValue(decodedToken as unknown); // Cast to any to bypass type check for testing
 
     const user = await getUserFromToken(mockToken, JWT_SECRET, prisma);
 
