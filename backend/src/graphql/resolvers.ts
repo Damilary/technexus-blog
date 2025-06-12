@@ -27,7 +27,7 @@ import { GraphQLScalarType, Kind } from 'graphql';
 const DateTime = new GraphQLScalarType({
   name: 'DateTime',
   description: 'A custom DateTime scalar type',
-  serialize(value: any) { // value sent to the client
+  serialize(value: unknown) { // value sent to the client
     if (value instanceof Date) {
       return value.toISOString();
     }
