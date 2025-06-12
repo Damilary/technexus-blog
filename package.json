@@ -8,9 +8,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "prepare": "npm run build:package",
-    "build:package": "echo 'Add your package build command here, e.g., tsc --outDir dist'"
+    "lint": "next lint"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.76.1",

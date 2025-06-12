@@ -14,11 +14,11 @@ const nextConfig = {
     return config;
   },
   // Add other Next.js config options here as needed
-  // reactStrictMode: true,
-  // swcMinify: true,
-  // images: {
-  //   domains: ['example.com', 'another-example.com'],
-  // },
+  reactStrictMode: true,
+  // swcMinify: true, // swcMinify is true by default in Next.js 12+
+  images: {
+    domains: ['placeholder.example.com'], // TODO: Add actual image domains
+  },
   // async redirects() {
   //   return [
   //     {

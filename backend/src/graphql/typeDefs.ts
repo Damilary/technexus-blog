@@ -2,6 +2,9 @@
 import { gql } from "apollo-server-express";
 
 export const typeDefs = gql`
+  scalar JSON # Added JSON scalar
+  scalar DateTime
+
   type User {
     id: ID!
     name: String!
@@ -36,18 +39,23 @@ export const typeDefs = gql`
     id: ID!
     title: String!
     slug: String!
-    excerpt: String!
-    content: String!
+    excerpt: String # Optional as per typical usage
+    # content: String! # Original - will be changed to content: String
     coverImage: String
-    category: Category!
-    tags: [Tag!]
-    author: User!
-    publishedAt: String!
-    readingTime: String!
-    expertiseLevel: ExpertiseLevel!
-    viewCount: Int!
-    createdAt: String!
-    updatedAt: String!
+    # category: Category! # Assuming relation, might be complex for direct input
+    # tags: [Tag!] # Assuming relation
+    author: User! # Assuming relation, authorId will be in input or context
+    publishedDate: DateTime # Or DateTime
+    updatedDate: DateTime! # Or DateTime
+    readTimeMinutes: Int
+    isFeatured: Boolean!
+    isPublished: Boolean!
+    isTopPick: Boolean!
+    topPickOrder: Int
+    authorId: ID! # Added to match subtask example structure
+    primaryCategoryId: String # Added to match subtask example structure
+    content: String # Made optional for Markdown content
+    blocks: JSON # For block-based editor content
   }
 
   enum ExpertiseLevel {
@@ -90,12 +98,20 @@ export const typeDefs = gql`
 
   input ArticleInput {
     title: String!
-    excerpt: String!
-    content: String!
+    slug: String! # Added slug as it's usually required
+    excerpt: String # Optional
+    publishedDate: String # Optional
+    isFeatured: Boolean # Optional
+    isPublished: Boolean # Optional
+    isTopPick: Boolean # Optional
+    topPickOrder: Int # Optional
+    primaryCategoryId: String # Optional
+    # categoryId: ID! # Replaced by primaryCategoryId to match Article type
+    # tagIds: [ID!] # Assuming tags are handled differently or as separate relation mutations
     coverImage: String
-    categoryId: ID!
-    tagIds: [ID!]
-    expertiseLevel: ExpertiseLevel!
+    expertiseLevel: ExpertiseLevel
+    content: String # Optional new field
+    blocks: JSON # Optional new field
   }
 
   input CreateUserInput {

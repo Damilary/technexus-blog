@@ -2,6 +2,15 @@
 import dotenv from "dotenv";
 dotenv.config(); // Load environment variables from .env file
 
+// Startup Environment Variable Checks
+const REQUIRED_ENV_VARS = ["DATABASE_URL", "JWT_SECRET"];
+for (const varName of REQUIRED_ENV_VARS) {
+  if (!Object.prototype.hasOwnProperty.call(process.env, varName)) {
+    console.error(`FATAL ERROR: Environment variable ${varName} is not set.`);
+    process.exit(1); // Exit if a required variable is missing
+  }
+}
+
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -14,7 +23,7 @@ import { getUserFromToken } from "./middleware/auth";
 import { PrismaClient } from "./generated/prisma";
 import { Context } from "./graphql/types";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-super-secret-key";
+const JWT_SECRET = process.env.JWT_SECRET ?? (() => { throw new Error("JWT_SECRET is not defined"); })();
 const prisma = new PrismaClient();
 
 // Merge resolvers
@@ -50,12 +59,27 @@ mongoose
 
 // Initialize Apollo Server
 async function startServer() {
+  // JWT_SECRET is already defined and checked at the top level
   const server = new ApolloServer<Context>({
     typeDefs,
     resolvers: combinedResolvers,
-    formatError: (error) => {
-      console.error("GraphQL Error:", error);
-      return error;
+    formatError: (formattedError, error) => {
+      // Log the original error for internal debugging
+      console.error("GraphQL Error (Original): ", error); // Log original error
+      console.error("GraphQL Error (Formatted): ", formattedError); // Log formatted error
+
+      // In a production environment, hide detailed errors from the client
+      if (process.env.NODE_ENV === "production") {
+        // Return a generic message
+        // Optionally, include error extensions like 'code' if they are safe
+        return {
+          message: "An unexpected error occurred. Please try again later.",
+          // Preserve code if available and deemed safe, otherwise default
+          extensions: { code: formattedError.extensions?.code || "INTERNAL_SERVER_ERROR" },
+        };
+      }
+      // In development, return the detailed error
+      return formattedError;
     },
   });
 
@@ -67,6 +91,7 @@ async function startServer() {
     expressMiddleware(server, {
       context: async ({ req }) => {
         const token = req.headers.authorization?.split(" ")[1] || "";
+        // Pass JWT_SECRET from the top scope, which is now checked and asserted as non-null
         const user = await getUserFromToken(token, JWT_SECRET, prisma);
         return { prisma, user };
       },

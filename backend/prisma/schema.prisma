@@ -37,7 +37,8 @@ model Article {
   title               String
   slug                String    @unique
   excerpt             String?
-  // content             Json // For ContentBlock[], Prisma's Json type can store structured data
+  content             String? // For Markdown content
+  blocks              Json? // For block-based editor content (e.g., TipTap/EditorJS)
   publishedDate       DateTime?
   updatedDate         DateTime  @updatedAt
   readTimeMinutes     Int?

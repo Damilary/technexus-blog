@@ -16,13 +16,39 @@ import bcrypt, { hash } from "bcryptjs"; // Import bcryptjs
 import jwt, { sign } from "jsonwebtoken"; // Import jsonwebtoken
 import { checkRole } from "../middleware/rbac";
 
-const JWT_SECRET = process.env.JWT_SECRET ?? "your-super-secret-key"; // Use environment variable
+const JWT_SECRET = process.env.JWT_SECRET; // Use environment variable
 
 // JWT_SECRET should be validated at application startup.
 // Assuming your GraphQL context provides prisma client instance
 // e.g. context: { prisma }
 
+import { GraphQLScalarType, Kind } from 'graphql';
+
+const DateTime = new GraphQLScalarType({
+  name: 'DateTime',
+  description: 'A custom DateTime scalar type',
+  serialize(value: unknown) { // value sent to the client
+    if (value instanceof Date) {
+      return value.toISOString();
+    }
+    return null;
+  },
+  parseValue(value: unknown) { // value from the client
+    if (typeof value === 'string') {
+      return new Date(value);
+    }
+    return null;
+  },
+  parseLiteral(ast: unknown) { // value from the client query
+    if (ast.kind === Kind.STRING) {
+      return new Date(ast.value);
+    }
+    return null;
+  },
+});
+
 export const resolvers = {
+  DateTime, // Add DateTime scalar resolver
   Query: {
     articles: async (
       _: never,
@@ -152,46 +178,7 @@ export const resolvers = {
       };
     },
 
-    signup: async (
-      _: never,
-      {
-        name,
-        email,
-        password,
-      }: { name: string; email: string; password: string },
-      { prisma }: Context
-    ): Promise<AuthPayload> => {
-      const existingUser = await prisma.user.findUnique({ where: { email } });
-      if (existingUser) {
-        throw new GraphQLError("Email already in use.", {
-          extensions: { code: "BAD_USER_INPUT" },
-        });
-      }
-
-      const saltRounds = 10; // Or a value from environment variables
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-      const newUser = await prisma.user.create({
-        data: {
-          username: name,
-          email,
-          passwordHash: hashedPassword,
-          // role: 'READER' // If you have a default role in your Prisma schema
-        },
-      });
-
-      const token = jwt.sign(
-        { userId: newUser.id, email: newUser.email /*, role: newUser.role */ },
-        JWT_SECRET,
-        { expiresIn: "1d" }
-      );
-      // Return a "safe" user object
-      const { passwordHash, ...safeNewUser } = newUser;
-      return {
-        token,
-        user: safeNewUser as User, // Cast as User
-      };
-    },
+    // Signup is now handled by userResolvers.Mutation.signup and merged in index.ts
 
     createArticle: async (
       _: never,
@@ -208,8 +195,9 @@ export const resolvers = {
         UserRole.CONTRIBUTOR,
         UserRole.EDITOR,
         UserRole.ADMIN,
-      ] as UserRole[];
-      if (!allowedRoles.includes(user.role as unknown as UserRole)) {
+      ];
+      // user.role is already UserRole type from Context if user exists
+      if (!allowedRoles.includes(user.role)) {
         throw new GraphQLError("Not authorized to create articles", {
           extensions: { code: "FORBIDDEN" },
         });
@@ -240,7 +228,7 @@ export const resolvers = {
           extensions: { code: "NOT_FOUND" },
         });
       }
-      if (articleToUpdate.authorId !== user.id /* && user.role !== 'ADMIN' */) {
+      if (articleToUpdate.authorId !== user.id && user.role !== UserRole.ADMIN) {
         // Add admin override if needed
         throw new GraphQLError("Not authorized to update this article.", {
           extensions: { code: "FORBIDDEN" },
@@ -272,7 +260,7 @@ export const resolvers = {
           extensions: { code: "NOT_FOUND" },
         });
       }
-      if (articleToDelete.authorId !== user.id /* && user.role !== 'ADMIN' */) {
+      if (articleToDelete.authorId !== user.id && user.role !== UserRole.ADMIN) {
         throw new GraphQLError("Not authorized to delete this article.", {
           extensions: { code: "FORBIDDEN" },
         });
