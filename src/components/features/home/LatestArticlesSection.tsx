@@ -2,8 +2,8 @@
 
 'use client';
 
-import React, { useEffect, useRef } from 'react';
-import { ArticleCard, Article } from '@/components/features/articles/ArticleCard';
+import React, { useEffect } from 'react';
+import { ArticleCard } from '@/components/features/articles/ArticleCard';
 import { useLatestArticles } from '@/hooks/useLatestArticles';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useInView } from 'react-intersection-observer';

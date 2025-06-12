@@ -6,7 +6,7 @@ import { mockGraphQLHandler } from "./mockData";
 
 // Determine if we should use mock data
 // In a real app, this would be controlled by environment variables
-const USE_MOCK_DATA = true;
+const USE_MOCK_DATA = false;
 
 /**
  * Enhanced GraphQL client that can switch between real API and mock data
