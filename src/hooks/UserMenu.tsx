@@ -9,7 +9,7 @@ import Image from 'next/image';
 
 interface UserMenuProps {
   user: User;
-};
+}
 
 export const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
