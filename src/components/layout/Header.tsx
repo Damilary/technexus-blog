@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
 // // import Image from 'next/image';
-import { SearchBar } from '@/components/ui/SearchBar';
-import { Button } from '@/components/ui/Button';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
-import { UserMenu } from '@/hooks/UserMenu';
-import { MobileMenu } from '@/components/layout/MobileMenu';
-import { useTheme } from '@/hooks/useTheme';
-import { useAuth } from '@/hooks/useAuth';
+import { SearchBar } from "@/components/ui/SearchBar";
+import { Button } from "@/components/ui/Button";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { UserMenu } from "@/hooks/UserMenu";
+import { MobileMenu } from "@/components/layout/MobileMenu";
+import { useTheme } from "@/hooks/useTheme";
+import { useAuth } from "@/hooks/useAuth";
 
 export interface NavigationItem {
   name: string;
@@ -38,9 +38,9 @@ export const Header: React.FC<HeaderProps> = ({ navigation }) => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Close mobile menu on window resize (if screen becomes larger than mobile breakpoint)
@@ -50,15 +50,15 @@ export const Header: React.FC<HeaderProps> = ({ navigation }) => {
         setMobileMenuOpen(false);
       }
     };
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [mobileMenuOpen]);
 
   return (
-    <header 
+    <header
       className={`sticky top-0 z-50 bg-white dark:bg-darkMode-bg border-b border-light-dark transition-shadow ${
-        isScrolled ? 'shadow-md' : ''
+        isScrolled ? "shadow-md" : ""
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -72,23 +72,33 @@ export const Header: React.FC<HeaderProps> = ({ navigation }) => {
               </div>
             </Link>
           </div>
-          
+
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {navigation.main.map((item) => (
               <div key={item.name} className="relative group">
-                <Link 
+                <Link
                   href={item.href}
                   className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-primary text-sm font-medium text-dark dark:text-white hover:text-primary transition-colors"
                 >
                   {item.name}
                   {item.subCategories && (
-                    <svg className="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    <svg
+                      className="ml-1 h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
                   )}
                 </Link>
-                
+
                 {/* Dropdown for subcategories */}
                 {item.subCategories && (
                   <div className="absolute z-10 hidden group-hover:block pt-2 w-48">
@@ -110,14 +120,14 @@ export const Header: React.FC<HeaderProps> = ({ navigation }) => {
               </div>
             ))}
           </nav>
-          
+
           {/* Right side items */}
           <div className="flex items-center space-x-4">
             <SearchBar className="hidden md:block w-48 lg:w-64" />
             <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
-            
+
             {/* Subscribe button */}
-            <Button 
+            <Button
               variant="tertiary"
               className="hidden md:block"
               onClick={() => setShowNewsletterModal(true)}
@@ -125,7 +135,7 @@ export const Header: React.FC<HeaderProps> = ({ navigation }) => {
             >
               Subscribe
             </Button>
-            
+
             {/* Auth buttons or user menu */}
             {isAuthenticated && user ? (
               <UserMenu user={user} />
@@ -139,52 +149,84 @@ export const Header: React.FC<HeaderProps> = ({ navigation }) => {
                 </Button>
               </div>
             )}
-            
+
             {/* Mobile menu button */}
             <button
               type="button"
               className="md:hidden p-2 rounded-md text-medium hover:text-dark dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-expanded={mobileMenuOpen ? 'true' : 'false'}
+              aria-expanded={mobileMenuOpen ? "true" : "false"}
               title="Open main menu"
             >
               <span className="sr-only">Open main menu</span>
               {mobileMenuOpen ? (
                 // X icon when menu is open
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               ) : (
                 // Hamburger icon when menu is closed
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
                 </svg>
               )}
             </button>
           </div>
         </div>
       </div>
-      
+
       {/* Mobile menu */}
-      <MobileMenu 
-        isOpen={mobileMenuOpen} 
-        setIsOpen={setMobileMenuOpen} 
-        navigation={navigation} 
-        user={user} 
+      <MobileMenu
+        isOpen={mobileMenuOpen}
+        setIsOpen={setMobileMenuOpen}
+        navigation={navigation}
+        user={user}
       />
-      
+
       {/* Newsletter modal would be implemented here */}
       {showNewsletterModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white dark:bg-darkMode-bg p-6 rounded-lg shadow-xl max-w-md w-full">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-dark dark:text-white">Subscribe to our Newsletter</h2>
-              <button 
+              <h2 className="text-xl font-bold text-dark dark:text-white">
+                Subscribe to our Newsletter
+              </h2>
+              <button
                 onClick={() => setShowNewsletterModal(false)}
                 className="text-medium hover:text-dark dark:hover:text-white"
               >
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -193,7 +235,10 @@ export const Header: React.FC<HeaderProps> = ({ navigation }) => {
             </p>
             <form className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-dark dark:text-white mb-1">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-dark dark:text-white mb-1"
+                >
                   Email address
                 </label>
                 <input
